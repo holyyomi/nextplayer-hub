@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TrendingUp, FileText, Sparkles, MessageCircle, Plus, Pencil } from "lucide-react";
+import { TrendingUp, FileText, Sparkles, MessageCircle, Plus, Pencil, FilePlus2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,12 +9,14 @@ import { kpis, weeklyReports as initial, WeeklyReport, oneLineSummary } from "@/
 import { useAdminMode } from "@/lib/admin-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { InsightSection } from "@/components/InsightSection";
+import { EmptyState } from "@/components/EmptyState";
 
 export default function Reports() {
   const { isAdmin } = useAdminMode();
   const [reports, setReports] = useState<WeeklyReport[]>(initial);
-  const [activeId, setActiveId] = useState(initial[0].id);
-  const active = reports.find((r) => r.id === activeId)!;
+  const [activeId, setActiveId] = useState<string | null>(initial[0]?.id ?? null);
+  const active = reports.find((r) => r.id === activeId) ?? null;
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<WeeklyReport | null>(null);
   const empty: WeeklyReport = {
