@@ -178,6 +178,42 @@ export type WeeklyReport = {
   createdAt: string;
 };
 
+export type InsightStatus = "idle" | "approved" | "hold";
+export type InsightAction = {
+  id: string;
+  category: "소재" | "랜딩" | "운영";
+  title: string;
+  body: string;
+  impact: string;
+  status: InsightStatus;
+};
+export const insightActions: InsightAction[] = [
+  {
+    id: "i1",
+    category: "소재",
+    title: "신규 소재 메시지 테스트 제안",
+    body: "현재 라이브 소재의 CTR이 안정 구간에 들어왔습니다. ‘혜택 강조’ 카피와 ‘사용 시점 강조’ 카피로 A/B 테스트를 제안드립니다.",
+    impact: "예상 CTR +0.2%p · 2주 소요",
+    status: "idle",
+  },
+  {
+    id: "i2",
+    category: "랜딩",
+    title: "랜딩 상단 CTA 구조 개선 제안",
+    body: "전환 경로 분석 결과, 첫 화면 이탈이 38% 수준입니다. 핵심 베네핏 1줄 + CTA 노출 위치 상향을 제안드립니다.",
+    impact: "예상 전환율 +6~9%",
+    status: "approved",
+  },
+  {
+    id: "i3",
+    category: "운영",
+    title: "다음 주 운영 액션",
+    body: "전환 이벤트 재정의 마감과 함께, 검색 키워드 그룹 2차 정비를 동시 진행하면 ROAS 안정화가 가능합니다.",
+    impact: "예상 ROAS +5%p",
+    status: "idle",
+  },
+];
+
 export const weeklyReports: WeeklyReport[] = [
   {
     id: "r1",

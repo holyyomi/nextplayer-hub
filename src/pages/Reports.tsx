@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TrendingUp, FileText, Sparkles, MessageCircle, Plus, Pencil } from "lucide-react";
+import { TrendingUp, FileText, Sparkles, MessageCircle, Plus, Pencil, FilePlus2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,12 +9,14 @@ import { kpis, weeklyReports as initial, WeeklyReport, oneLineSummary } from "@/
 import { useAdminMode } from "@/lib/admin-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { InsightSection } from "@/components/InsightSection";
+import { EmptyState } from "@/components/EmptyState";
 
 export default function Reports() {
   const { isAdmin } = useAdminMode();
   const [reports, setReports] = useState<WeeklyReport[]>(initial);
-  const [activeId, setActiveId] = useState(initial[0].id);
-  const active = reports.find((r) => r.id === activeId)!;
+  const [activeId, setActiveId] = useState<string | null>(initial[0]?.id ?? null);
+  const active = reports.find((r) => r.id === activeId) ?? null;
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<WeeklyReport | null>(null);
   const empty: WeeklyReport = {
@@ -75,24 +77,29 @@ export default function Reports() {
       </section>
 
       {/* 요약 카드 */}
-      <section className="grid gap-4 md:grid-cols-3">
-        <div className="surface-card p-6">
-          <TrendingUp className="h-5 w-5 text-primary" />
-          <h3 className="mt-3 text-sm font-semibold text-muted-foreground">성과 요약</h3>
-          <p className="mt-2 text-sm leading-relaxed">{active.summary}</p>
-        </div>
-        <div className="surface-card p-6">
-          <Sparkles className="h-5 w-5 text-warning" />
-          <h3 className="mt-3 text-sm font-semibold text-muted-foreground">주요 변화</h3>
-          <p className="mt-2 text-sm leading-relaxed">{active.changes}</p>
-        </div>
-        <div className="surface-card bg-accent/30 p-6">
-          <MessageCircle className="h-5 w-5 text-primary" />
-          <h3 className="mt-3 text-sm font-semibold text-muted-foreground">담당자 코멘트</h3>
-          <p className="mt-2 text-sm leading-relaxed">{active.comment}</p>
-          <div className="mt-4 text-[11px] text-muted-foreground">— {active.author}</div>
-        </div>
-      </section>
+      {active && (
+        <section className="grid gap-4 md:grid-cols-3">
+          <div className="surface-card p-6">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            <h3 className="mt-3 text-sm font-semibold text-muted-foreground">성과 요약</h3>
+            <p className="mt-2 text-sm leading-relaxed">{active.summary}</p>
+          </div>
+          <div className="surface-card p-6">
+            <Sparkles className="h-5 w-5 text-warning" />
+            <h3 className="mt-3 text-sm font-semibold text-muted-foreground">주요 변화</h3>
+            <p className="mt-2 text-sm leading-relaxed">{active.changes}</p>
+          </div>
+          <div className="surface-card bg-accent/30 p-6">
+            <MessageCircle className="h-5 w-5 text-primary" />
+            <h3 className="mt-3 text-sm font-semibold text-muted-foreground">담당자 코멘트</h3>
+            <p className="mt-2 text-sm leading-relaxed">{active.comment}</p>
+            <div className="mt-4 text-[11px] text-muted-foreground">— {active.author}</div>
+          </div>
+        </section>
+      )}
+
+      {/* 이번 주 제안 */}
+      <InsightSection />
 
       {/* 보고서실 */}
       <section className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
@@ -108,52 +115,77 @@ export default function Reports() {
               </Button>
             )}
           </div>
-          <div className="max-h-[480px] overflow-y-auto">
-            {reports.map((r) => (
-              <button
-                key={r.id}
-                onClick={() => setActiveId(r.id)}
-                className={cn(
-                  "w-full border-b px-4 py-3.5 text-left transition-colors hover:bg-muted/40",
-                  activeId === r.id && "bg-accent/40",
-                )}
-              >
-                <div className="text-sm font-semibold">{r.title}</div>
-                <div className="num mt-1 text-[11px] text-muted-foreground">{r.period}</div>
-                <div className="mt-2 text-[11px] text-muted-foreground">작성 {r.author} · {r.createdAt}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="surface-card p-7">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <FileText className="h-3.5 w-3.5" />
-                <span className="num">{active.period}</span>
-              </div>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight">{active.title}</h2>
+          {reports.length === 0 ? (
+            <div className="p-4">
+              <EmptyState
+                icon={FilePlus2}
+                size="sm"
+                title="아직 등록된 보고서가 없어요"
+                description={isAdmin ? "첫 주간 보고서를 작성해 보세요." : "곧 첫 보고서가 등록될 예정입니다."}
+                action={isAdmin ? { label: "보고서 작성", onClick: openNew } : undefined}
+              />
             </div>
-            {isAdmin && (
-              <Button variant="outline" size="sm" className="gap-1.5" onClick={() => openEdit(active)}>
-                <Pencil className="h-3.5 w-3.5" /> 편집
-              </Button>
-            )}
-          </div>
-
-          <div className="mt-6 space-y-6">
-            <Block label="성과 요약" text={active.summary} />
-            <Block label="주요 변경 사항" text={active.changes} />
-            <Block label="담당자 코멘트" text={active.comment} />
-            <Block label="다음 주 운영 포인트" text={active.nextWeek} highlight />
-          </div>
-
-          <div className="mt-8 flex items-center justify-between border-t pt-5 text-xs text-muted-foreground">
-            <span>작성 {active.author}</span>
-            <span className="num">{active.createdAt}</span>
-          </div>
+          ) : (
+            <div className="max-h-[480px] overflow-y-auto">
+              {reports.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => setActiveId(r.id)}
+                  className={cn(
+                    "relative w-full border-b px-4 py-3.5 text-left transition-colors hover:bg-muted/40",
+                    activeId === r.id && "bg-accent/40",
+                  )}
+                >
+                  {activeId === r.id && (
+                    <span className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-primary" />
+                  )}
+                  <div className="text-sm font-semibold">{r.title}</div>
+                  <div className="num mt-1 text-[11px] text-muted-foreground">{r.period}</div>
+                  <div className="mt-2 text-[11px] text-muted-foreground">작성 {r.author} · {r.createdAt}</div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
+
+        {active ? (
+          <div className="surface-card p-7">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <FileText className="h-3.5 w-3.5" />
+                  <span className="num">{active.period}</span>
+                </div>
+                <h2 className="mt-2 text-2xl font-bold tracking-tight">{active.title}</h2>
+              </div>
+              {isAdmin && (
+                <Button variant="outline" size="sm" className="gap-1.5" onClick={() => openEdit(active)}>
+                  <Pencil className="h-3.5 w-3.5" /> 편집
+                </Button>
+              )}
+            </div>
+
+            <div className="mt-6 space-y-6">
+              <Block label="성과 요약" text={active.summary} />
+              <Block label="주요 변경 사항" text={active.changes} />
+              <Block label="담당자 코멘트" text={active.comment} />
+              <Block label="다음 주 운영 포인트" text={active.nextWeek} highlight />
+            </div>
+
+            <div className="mt-8 flex items-center justify-between border-t pt-5 text-xs text-muted-foreground">
+              <span>작성 {active.author}</span>
+              <span className="num">{active.createdAt}</span>
+            </div>
+          </div>
+        ) : (
+          <div className="surface-card p-7">
+            <EmptyState
+              icon={FileText}
+              title="선택된 보고서가 없어요"
+              description="좌측에서 보고서를 선택하면 이곳에 상세 내용이 표시됩니다."
+            />
+          </div>
+        )}
       </section>
 
       {/* Looker 임베드 placeholder */}
