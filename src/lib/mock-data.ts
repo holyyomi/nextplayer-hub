@@ -179,37 +179,61 @@ export type WeeklyReport = {
 };
 
 export type InsightStatus = "idle" | "approved" | "hold";
+export type InsightPriority = "high" | "medium" | "low";
 export type InsightAction = {
   id: string;
-  category: "소재" | "랜딩" | "운영";
+  category: "소재" | "랜딩" | "운영" | "프로모션";
   title: string;
   body: string;
+  reason: string;
   impact: string;
+  effort: string;
+  priority: InsightPriority;
   status: InsightStatus;
 };
 export const insightActions: InsightAction[] = [
   {
     id: "i1",
     category: "소재",
-    title: "신규 소재 메시지 테스트 제안",
-    body: "현재 라이브 소재의 CTR이 안정 구간에 들어왔습니다. ‘혜택 강조’ 카피와 ‘사용 시점 강조’ 카피로 A/B 테스트를 제안드립니다.",
-    impact: "예상 CTR +0.2%p · 2주 소요",
+    title: "신규 소재 메시지 A/B 테스트",
+    body: "현재 라이브 소재 CTR이 2.34%로 안정 구간에 들어왔습니다. ‘혜택 강조’와 ‘사용 시점 강조’ 카피로 다음 단계 학습을 제안드립니다.",
+    reason: "동일 메시지 노출 3주차 — 학습 곡선이 평탄해지는 시점입니다.",
+    impact: "예상 CTR +0.15~0.25%p",
+    effort: "소재 4종 · 약 2주",
+    priority: "high",
     status: "idle",
   },
   {
     id: "i2",
     category: "랜딩",
-    title: "랜딩 상단 CTA 구조 개선 제안",
-    body: "전환 경로 분석 결과, 첫 화면 이탈이 38% 수준입니다. 핵심 베네핏 1줄 + CTA 노출 위치 상향을 제안드립니다.",
+    title: "랜딩 상단 CTA 구조 개선",
+    body: "전환 경로 분석 결과 첫 화면 이탈률이 38% 수준입니다. 핵심 베네핏 1줄과 CTA 노출 위치를 상향 조정하면 전환율 회복 여지가 큽니다.",
+    reason: "히트맵상 1스크롤 이탈 비중이 가장 높음.",
     impact: "예상 전환율 +6~9%",
+    effort: "디자인 1주 · 개발 3일",
+    priority: "high",
     status: "approved",
   },
   {
     id: "i3",
+    category: "프로모션",
+    title: "봄 프로모션 일정 연계 운영안",
+    body: "4/16 봄맞이 프로모션 라이브에 맞춰 검색 광고 입찰가 +15%, 디스커버리 노출 확대를 함께 진행하면 시너지가 큽니다.",
+    reason: "프로모션 시작 D-2, 캠페인 정합성 확보 필요.",
+    impact: "예상 매출 +12~18%",
+    effort: "운영 세팅 1일",
+    priority: "medium",
+    status: "idle",
+  },
+  {
+    id: "i4",
     category: "운영",
     title: "다음 주 운영 액션",
-    body: "전환 이벤트 재정의 마감과 함께, 검색 키워드 그룹 2차 정비를 동시 진행하면 ROAS 안정화가 가능합니다.",
+    body: "전환 이벤트 재정의 마감과 함께 검색 키워드 그룹 2차 정비를 동시 진행하면 ROAS 안정화 효과가 큽니다.",
+    reason: "1차 정비 후 데이터 누적 충분.",
     impact: "예상 ROAS +5%p",
+    effort: "운영팀 내부 진행 · 3일",
+    priority: "low",
     status: "idle",
   },
 ];
