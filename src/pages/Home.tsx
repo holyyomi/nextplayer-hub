@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, TrendingUp, TrendingDown, Activity, CalendarDays, MessageSquare } from "lucide-react";
+import { ArrowUpRight, TrendingUp, TrendingDown, Activity, CalendarDays, MessageSquare, Quote } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/EmptyState";
 import {
   kpis,
   operationPoints,
@@ -20,6 +21,7 @@ import { ko } from "date-fns/locale";
 export default function Home() {
   const counts: Record<TaskStatus, number> = { pending: 0, progress: 0, done: 0 };
   threads.forEach((t) => (counts[t.status] += 1));
+  const totalThreads = threads.length;
 
   const upcoming = initialEvents
     .filter((e) => isAfter(parseISO(e.date), startOfToday()) || e.date === format(new Date(), "yyyy-MM-dd"))
@@ -88,7 +90,7 @@ export default function Home() {
 
       {/* 운영 요약: 진행 상태 + 다가오는 일정 */}
       <section className="grid gap-4 lg:grid-cols-2">
-        <div className="surface-card p-6">
+        <div className="surface-card flex flex-col p-6">
           <div className="mb-5 flex items-center justify-between">
             <div>
               <h3 className="text-base font-semibold">진행 상태 요약</h3>
@@ -100,18 +102,43 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            {(["pending", "progress", "done"] as TaskStatus[]).map((s) => (
-              <div key={s} className="rounded-xl border bg-muted/20 p-4">
-                <StatusBadge status={s} />
-                <div className="num mt-3 text-3xl font-bold">{counts[s]}</div>
-                <div className="mt-1 text-[11px] text-muted-foreground">{STATUS_LABEL[s]}</div>
-              </div>
-            ))}
-          </div>
+          {totalThreads === 0 ? (
+            <EmptyState
+              icon={MessageSquare}
+              size="sm"
+              title="진행 중인 요청이 없어요"
+              description="새 요청이 들어오면 여기에 자동 집계됩니다."
+            />
+          ) : (
+            <div className="grid flex-1 grid-cols-3 gap-3">
+              {(["pending", "progress", "done"] as TaskStatus[]).map((s) => {
+                const pct = totalThreads ? Math.round((counts[s] / totalThreads) * 100) : 0;
+                return (
+                  <div key={s} className="flex flex-col rounded-xl border bg-muted/20 p-4">
+                    <StatusBadge status={s} />
+                    <div className="num mt-3 text-3xl font-bold leading-none">{counts[s]}</div>
+                    <div className="mt-1 text-[11px] text-muted-foreground">{STATUS_LABEL[s]}</div>
+                    <div className="mt-3 h-1 overflow-hidden rounded-full bg-border/70">
+                      <div
+                        className={`h-full ${
+                          s === "pending"
+                            ? "bg-status-pending"
+                            : s === "progress"
+                              ? "bg-status-progress"
+                              : "bg-status-done"
+                        }`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <div className="num mt-1.5 text-[10px] text-muted-foreground">{pct}%</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        <div className="surface-card p-6">
+        <div className="surface-card flex flex-col p-6">
           <div className="mb-5 flex items-center justify-between">
             <div>
               <h3 className="text-base font-semibold">다가오는 일정</h3>
@@ -123,33 +150,37 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-          <div className="space-y-2">
-            {upcoming.length === 0 && (
-              <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
-                다가오는 일정이 없습니다.
-              </div>
-            )}
-            {upcoming.map((e) => (
-              <div key={e.id} className="flex items-center gap-4 rounded-xl border bg-muted/20 p-4">
-                <div className="flex h-12 w-12 flex-col items-center justify-center rounded-lg bg-card">
-                  <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                    {format(parseISO(e.date), "MMM", { locale: ko })}
-                  </span>
-                  <span className="num text-lg font-bold leading-none">{format(parseISO(e.date), "dd")}</span>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="h-1.5 w-1.5 rounded-full"
-                      style={{ background: EVENT_COLOR[e.type] }}
-                    />
-                    <span className="text-[11px] text-muted-foreground">{EVENT_LABEL[e.type]}</span>
+          <div className="flex-1 space-y-2">
+            {upcoming.length === 0 ? (
+              <EmptyState
+                icon={CalendarDays}
+                size="sm"
+                title="다가오는 일정이 없어요"
+                description="등록된 일정이 생기면 가장 가까운 3건을 보여드립니다."
+              />
+            ) : (
+              upcoming.map((e) => (
+                <div key={e.id} className="flex items-center gap-4 rounded-xl border bg-muted/20 p-4">
+                  <div className="flex h-12 w-12 flex-col items-center justify-center rounded-lg bg-card">
+                    <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                      {format(parseISO(e.date), "MMM", { locale: ko })}
+                    </span>
+                    <span className="num text-lg font-bold leading-none">{format(parseISO(e.date), "dd")}</span>
                   </div>
-                  <div className="truncate text-sm font-medium">{e.title}</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="h-1.5 w-1.5 rounded-full"
+                        style={{ background: EVENT_COLOR[e.type] }}
+                      />
+                      <span className="text-[11px] text-muted-foreground">{EVENT_LABEL[e.type]}</span>
+                    </div>
+                    <div className="truncate text-sm font-medium">{e.title}</div>
+                  </div>
+                  <CalendarDays className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <CalendarDays className="h-4 w-4 text-muted-foreground" />
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -157,34 +188,46 @@ export default function Home() {
       {/* 최근 운영 활동 + 한 줄 요약 */}
       <section className="grid gap-4 lg:grid-cols-3">
         <div className="surface-card p-6 lg:col-span-2">
-          <div className="mb-4 flex items-center gap-2">
-            <Activity className="h-4 w-4 text-muted-foreground" />
-            <h3 className="text-base font-semibold">최근 운영 활동</h3>
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-muted-foreground" />
+              <h3 className="text-base font-semibold">최근 운영 활동</h3>
+            </div>
+            <span className="text-[11px] text-muted-foreground">최근 4건</span>
           </div>
-          <div className="relative space-y-4 pl-4">
-            <div className="absolute bottom-2 left-[7px] top-2 w-px bg-border" />
-            {recentLogs.map((log, i) => (
-              <div key={i} className="relative">
-                <div className="absolute -left-[14px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-background bg-primary" />
-                <div className="flex items-baseline justify-between gap-3">
-                  <p className="text-sm">{log.text}</p>
-                  <span className="num shrink-0 text-[11px] text-muted-foreground">{log.at}</span>
-                </div>
-                <span className="text-[11px] text-muted-foreground">{log.by}</span>
-              </div>
-            ))}
-          </div>
+          {recentLogs.length === 0 ? (
+            <EmptyState icon={Activity} size="sm" title="아직 기록된 활동이 없어요" />
+          ) : (
+            <ul className="relative space-y-3 pl-4">
+              <div className="absolute bottom-2 left-[7px] top-2 w-px bg-border" />
+              {recentLogs.map((log, i) => (
+                <li key={i} className="relative">
+                  <div className="absolute -left-[14px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-background bg-primary" />
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="text-sm leading-snug">{log.text}</p>
+                    <span className="num shrink-0 text-[11px] text-muted-foreground">{log.at}</span>
+                  </div>
+                  <span className="text-[11px] text-muted-foreground">{log.by}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
-        <div className="surface-card flex flex-col justify-between bg-accent/30 p-6">
-          <div>
-            <MessageSquare className="h-5 w-5 text-primary" />
-            <h3 className="mt-3 text-sm font-semibold text-muted-foreground">한 줄 운영 요약</h3>
-            <p className="mt-3 text-base font-medium leading-relaxed text-foreground">
-              "{oneLineSummary}"
+        <div className="surface-card relative flex flex-col justify-between overflow-hidden bg-accent/40 p-6">
+          <Quote className="absolute -right-2 -top-2 h-24 w-24 text-primary/10" strokeWidth={1.5} />
+          <div className="relative">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-primary/80">한 줄 운영 요약</h3>
+            <p className="mt-3 text-base font-semibold leading-relaxed text-foreground">
+              {oneLineSummary}
             </p>
           </div>
-          <div className="mt-6 text-[11px] text-muted-foreground">— 살만 운영팀</div>
+          <div className="relative mt-6 flex items-center justify-between border-t border-primary/10 pt-3 text-[11px] text-muted-foreground">
+            <span>— 살만 운영팀</span>
+            <Link to="/reports" className="inline-flex items-center gap-1 text-primary hover:underline">
+              리포트 열기 <ArrowUpRight className="h-3 w-3" />
+            </Link>
+          </div>
         </div>
       </section>
     </div>
