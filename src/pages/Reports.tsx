@@ -120,8 +120,8 @@ export default function Reports() {
               <EmptyState
                 icon={FilePlus2}
                 size="sm"
-                title="아직 등록된 보고서가 없어요"
-                description={isAdmin ? "첫 주간 보고서를 작성해 보세요." : "곧 첫 보고서가 등록될 예정입니다."}
+                title="첫 보고서를 기다리고 있어요"
+                description={isAdmin ? "이번 주 운영 내용을 정리해 첫 보고서를 올려보세요." : "이번 주 보고서가 준비되는 대로 이곳에 올려드릴게요."}
                 action={isAdmin ? { label: "보고서 작성", onClick: openNew } : undefined}
               />
             </div>
@@ -181,8 +181,8 @@ export default function Reports() {
           <div className="surface-card p-7">
             <EmptyState
               icon={FileText}
-              title="선택된 보고서가 없어요"
-              description="좌측에서 보고서를 선택하면 이곳에 상세 내용이 표시됩니다."
+              title="보고서를 선택해 주세요"
+              description="좌측 목록에서 보고서를 선택하면 이곳에 상세 내용을 보여드릴게요."
             />
           </div>
         )}

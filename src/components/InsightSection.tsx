@@ -53,26 +53,26 @@ export function InsightSection() {
   return (
     <section>
       {/* Section header */}
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
-              <Lightbulb className="h-3.5 w-3.5" />
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Lightbulb className="h-4 w-4" />
             </span>
-            <h2 className="text-base font-semibold tracking-tight">이번 주 제안</h2>
+            <h2 className="text-lg font-semibold tracking-tight">이번 주 제안</h2>
             <span className="rounded-full border bg-card px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
               살만 운영팀 큐레이션
             </span>
           </div>
-          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-            데이터를 살펴본 살만 운영팀이 다음 주 함께 진행하면 좋을 액션을 정리했습니다. 가볍게 승인·보류·코멘트로 의견을 남겨주세요.
+          <p className="mt-2 max-w-xl text-xs leading-relaxed text-muted-foreground">
+            이번 주 데이터를 살펴본 살만 운영팀이 함께 진행하면 좋을 액션을 정리했어요. 부담 없이 승인·보류·코멘트로 의견을 남겨주세요.
           </p>
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 rounded-full border bg-card/60 px-3 py-1 text-[11px] text-muted-foreground">
           <span className="num font-semibold text-foreground">{pendingCount}</span>
           <span>건 응답 대기</span>
           <span className="text-border">·</span>
-          <span className="num">{items.length}건 전체</span>
+          <span className="num">전체 {items.length}건</span>
         </div>
       </div>
 
@@ -220,12 +220,12 @@ export function InsightSection() {
       </div>
 
       {/* Footer note */}
-      <div className="mt-3 flex items-center justify-between rounded-xl border border-dashed bg-muted/20 px-4 py-2.5 text-[11px] text-muted-foreground">
+      <div className="mt-4 flex flex-col gap-2 rounded-xl border border-dashed bg-muted/20 px-4 py-2.5 text-[11px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-1.5">
           <Sparkles className="h-3 w-3 text-primary/70" />
-          제안은 매주 월요일 오전, 전주 데이터를 기반으로 갱신됩니다.
+          매주 월요일 오전, 전주 데이터를 바탕으로 새 제안을 정리해 올려드려요.
         </div>
-        <span>다음 갱신 · 4월 21일 (월)</span>
+        <span className="num">다음 업데이트 · 4월 21일 (월)</span>
       </div>
     </section>
   );

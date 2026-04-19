@@ -158,8 +158,8 @@ export default function Requests() {
               <EmptyState
                 icon={Inbox}
                 size="sm"
-                title="요청이 없어요"
-                description="새 요청을 작성하면 여기에 쌓입니다."
+                title="아직 요청이 없어요"
+                description="필요한 운영 요청을 자유롭게 작성해 주세요. 살만팀이 바로 확인합니다."
                 action={{ label: "새 요청 작성", onClick: () => setNewOpen(true) }}
               />
             </div>
@@ -218,7 +218,7 @@ export default function Requests() {
 
             <div className="flex-1 space-y-4 overflow-y-auto bg-muted/20 px-6 py-5">
               {active.messages.length === 0 ? (
-                <EmptyState icon={MessageSquarePlus} size="sm" title="아직 대화가 없어요" description="아래 입력창에서 첫 메시지를 보내보세요." />
+                <EmptyState icon={MessageSquarePlus} size="sm" title="첫 메시지를 남겨보세요" description="아래 입력창에서 요청 내용을 자유롭게 적어주세요." />
               ) : (
                 active.messages.map((m) => {
                   const me = m.role === "admin" ? isAdmin : !isAdmin;

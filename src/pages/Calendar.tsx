@@ -224,8 +224,8 @@ export default function Calendar() {
               <EmptyState
                 icon={CalendarPlus}
                 size="sm"
-                title="등록된 일정이 없어요"
-                description={isAdmin ? "이 날짜에 일정을 추가할 수 있어요." : undefined}
+                title="이 날엔 등록된 일정이 없어요"
+                description={isAdmin ? "이 날짜에 새 일정을 추가해 보세요." : "관련 일정이 생기면 이곳에 표시해 드릴게요."}
                 action={isAdmin ? { label: "일정 추가", onClick: () => openNew() } : undefined}
               />
             ) : (
@@ -270,7 +270,7 @@ export default function Calendar() {
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">다가오는 일정</h3>
           </div>
           {upcoming.length === 0 ? (
-            <EmptyState icon={CalendarDays} size="sm" title="예정된 일정이 없어요" />
+            <EmptyState icon={CalendarDays} size="sm" title="다가오는 일정이 없어요" description="새 일정이 등록되면 이곳에 모아 보여드릴게요." />
           ) : (
             <div className="space-y-1.5">
               {upcoming.map((e) => (
