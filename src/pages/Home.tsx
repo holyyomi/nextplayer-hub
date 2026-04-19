@@ -106,8 +106,8 @@ export default function Home() {
             <EmptyState
               icon={MessageSquare}
               size="sm"
-              title="진행 중인 요청이 없어요"
-              description="새 요청이 들어오면 여기에 자동 집계됩니다."
+              title="아직 진행 중인 요청이 없어요"
+              description="새 요청이 들어오면 이곳에서 한눈에 확인하실 수 있어요."
             />
           ) : (
             <div className="grid flex-1 grid-cols-3 gap-3">
@@ -155,8 +155,8 @@ export default function Home() {
               <EmptyState
                 icon={CalendarDays}
                 size="sm"
-                title="다가오는 일정이 없어요"
-                description="등록된 일정이 생기면 가장 가까운 3건을 보여드립니다."
+                title="이번 주 예정된 일정이 없어요"
+                description="새 일정이 등록되면 가장 가까운 3건을 보여드릴게요."
               />
             ) : (
               upcoming.map((e) => (
@@ -196,7 +196,7 @@ export default function Home() {
             <span className="text-[11px] text-muted-foreground">최근 4건</span>
           </div>
           {recentLogs.length === 0 ? (
-            <EmptyState icon={Activity} size="sm" title="아직 기록된 활동이 없어요" />
+            <EmptyState icon={Activity} size="sm" title="아직 기록된 활동이 없어요" description="운영팀의 최근 활동이 여기에 정리돼요." />
           ) : (
             <ul className="relative space-y-3 pl-4">
               <div className="absolute bottom-2 left-[7px] top-2 w-px bg-border" />
